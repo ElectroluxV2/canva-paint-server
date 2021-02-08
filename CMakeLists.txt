@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.17)
-project(canva_paint_server)
+project(canvaPaintServer)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CONAN_CMAKE_CXX_STANDARD 20)
 
-add_executable(canva_paint_server main.cpp)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
+add_executable(canvaPaintServer main.cpp)
+target_link_libraries(canvaPaintServer ${CONAN_LIBS})
