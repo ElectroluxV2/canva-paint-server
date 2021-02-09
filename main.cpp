@@ -2,6 +2,8 @@
 #include <thread>
 #include <algorithm>
 
+using namespace std;
+
 int main() {
     /* ws->getUserData returns one of these */
     struct PerSocketData {
@@ -9,10 +11,10 @@ int main() {
     };
 
     /* Simple echo websocket server, using multiple threads */
-    std::vector<std::thread *> threads(std::thread::hardware_concurrency());
+    vector<thread *> threads(thread::hardware_concurrency());
 
-    std::transform(threads.begin(), threads.end(), threads.begin(), [](std::thread */*t*/) {
-        return new std::thread([]() {
+    transform(threads.begin(), threads.end(), threads.begin(), [](thread */*t*/) {
+        return new thread([]() {
 
             /* Very simple WebSocket echo server */
             uWS::App().ws<PerSocketData>("/*", {
@@ -26,7 +28,7 @@ int main() {
                     .open = [](auto */*ws*/) {
 
                     },
-                    .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
+                    .message = [](auto *ws, string_view message, uWS::OpCode opCode) {
                         ws->send(message, opCode);
                     },
                     .drain = [](auto */*ws*/) {
@@ -38,21 +40,21 @@ int main() {
                     .pong = [](auto */*ws*/) {
 
                     },
-                    .close = [](auto */*ws*/, int /*code*/, std::string_view /*message*/) {
+                    .close = [](auto */*ws*/, int /*code*/, string_view /*message*/) {
 
                     }
             }).listen(9001, [](auto *listen_socket) {
                 if (listen_socket) {
-                    std::cout << "Thread " << std::this_thread::get_id() << " listening on port " << 9001 << std::endl;
+                    cout << "Thread " << this_thread::get_id() << " listening on port " << 9001 << endl;
                 } else {
-                    std::cout << "Thread " << std::this_thread::get_id() << " failed to listen on port 9001" << std::endl;
+                    cout << "Thread " << this_thread::get_id() << " failed to listen on port 9001" << endl;
                 }
             }).run();
 
         });
     });
 
-    std::for_each(threads.begin(), threads.end(), [](std::thread *t) {
+    for (thread *t : threads) {
         t->join();
-    });
+    }
 }
