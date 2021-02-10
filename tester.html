@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>WST</title>
+</head>
+<body>
+<script>
+    
+    let socket;
+    const init = () => {
+        document.testForm.url.value = `ws://localhost:3000/`;
+        document.testForm.inputtext.value = `Hello World!`;
+        document.testForm.disconnectButton.disabled = true;
+
+        setInterval(() => {
+            socket.send('ping');
+        }, 10000);
+    };
+
+    const doConnect = () => {
+        socket = new WebSocket(document.testForm.url.value);
+        socket.onopen = onOpen;
+        socket.onclose = onClose;
+        socket.onmessage = onMessage;
+        socket.onerror = onError;
+    };
+
+    const onOpen = (evt) => {
+        writeToScreen(`connected\n`);
+        document.testForm.connectButton.disabled = true;
+        document.testForm.disconnectButton.disabled = false;
+    }
+
+    const onClose = (evt) => {
+        writeToScreen(`disconnected\n`);
+        document.testForm.connectButton.disabled = false;
+        document.testForm.disconnectButton.disabled = true;
+    }
+
+    const onMessage = (evt) => {
+        writeToScreen(`response: ${evt.data}\n`);
+    }
+
+    const onError = (evt) => {
+        writeToScreen(`error: ${evt.data}\n`);
+        socket.close();
+        document.testForm.connectButton.disabled = false;
+        document.testForm.disconnectButton.disabled = true;
+    }
+
+    const doSend = (message) => {
+        writeToScreen(`sent: ${message}\n`);
+        socket.send(message);
+    }
+
+    const writeToScreen = (message) => {
+        document.testForm.outputtext.value += message
+        document.testForm.outputtext.scrollTop = document.testForm.outputtext.scrollHeight
+    }
+
+    window.onload = init;
+
+    const sendText = () => {
+        doSend(document.testForm.inputtext.value);
+    }
+
+    const clearText = () => {
+        document.testForm.outputtext.value = ``;
+    }
+
+    const doDisconnect = () => {
+        socket.close();
+    }
+
+</script>
+<form name="testForm">
+    <p>
+        <textarea name="url" cols="50" rows="1"></textarea>
+    </p>
+    <p>
+        <input name=connectButton type="button" value="Connect" onClick="doConnect()"/>
+        <input name=disconnectButton type="button" value="Disconnect" onClick="doDisconnect()"/>
+    </p>
+    <p>
+        <textarea name="outputtext" cols="50" rows="20"></textarea>
+    </p>
+    <p>
+        <textarea name="inputtext" cols="50" rows="1"></textarea>
+    </p>
+    <p>
+        <input type="button" name=sendButton value="Send" onClick="sendText()">
+        <input type="button" name=clearButton value="Clear" onClick="clearText()">
+    </p>
+</form>
+</body>
+</html>
