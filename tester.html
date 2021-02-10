@@ -12,10 +12,6 @@
         document.testForm.url.value = `ws://localhost:3000/`;
         document.testForm.inputtext.value = `Hello World!`;
         document.testForm.disconnectButton.disabled = true;
-
-        setInterval(() => {
-            socket.send('ping');
-        }, 10000);
     };
 
     const doConnect = () => {
