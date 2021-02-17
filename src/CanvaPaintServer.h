@@ -5,7 +5,8 @@
 #ifndef CANVAPAINTSERVER_CANVAPAINTSERVER_H
 #define CANVAPAINTSERVER_CANVAPAINTSERVER_H
 
-#include <App.h>
+#include <uWebSockets/App.h>
+#include <iostream>
 #include <thread>
 #include <vector>
 #include <algorithm>
