@@ -27,9 +27,11 @@ class CanvaPaintServer {
     // Contains all threads used by server
     vector<thread*> threads;
     map<thread::id, us_listen_socket_t*> threadsSockets;
+    vector<uWS::WebSocket<false, true>*> connectedSockets;
 
     // Multithreading guards
     mutex printGuard;
+    mutex socketsVector;
 
     // Single thread
     void ServerThread(unsigned short port);

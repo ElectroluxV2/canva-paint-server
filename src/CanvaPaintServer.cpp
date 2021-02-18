@@ -40,6 +40,11 @@ void CanvaPaintServer::ServerThread(unsigned short port) {
         // Handlers
         .upgrade = nullptr,
         .open = [this](auto *ws) {
+            // Push new connection, we use this to gracefully close server
+            this->socketsVector.lock();
+            this->connectedSockets.push_back(ws);
+            this->socketsVector.unlock();
+
             this->printGuard.lock();
             cout << "[" << this_thread::get_id() << "] new connection from " << ws->getRemoteAddressAsText() << endl;
             this->printGuard.unlock();
@@ -87,9 +92,14 @@ void CanvaPaintServer::ServerThread(unsigned short port) {
 void CanvaPaintServer::Shutdown() {
     this->shutdownRequested = true;
 
-    // Kill child sockets threads
+    // Stop listening to new connections
     for (auto pair : this->threadsSockets) {
         us_listen_socket_close(0, pair.second);
+    }
+
+    // Close existing connections
+    for (auto socket : this->connectedSockets) {
+        socket->close();
     }
 
     // Wait for others
