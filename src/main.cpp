@@ -1,8 +1,27 @@
 #include "CanvaPaintServer.h"
+#include "FreeLine.h"
+#include "StraightLine.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
+
+    CompiledObject* ar[2];
+
+    auto *freeLine = new FreeLine();
+    auto *straightLine = new StraightLine();
+
+    ar[0] = freeLine;
+    ar[1] = straightLine;
+
+
+    ar[0]->Test();
+    ar[1]->Test();
+
+    delete straightLine;
+    delete freeLine;
+
+    return 0;
 
     CanvaPaintServer server;
 
