@@ -12,7 +12,8 @@ class CompiledObject {
     string name;
 
 public:
-    virtual void Test();
+    virtual void Test() {};
+    virtual ~CompiledObject() = default;
 };
 
 #endif //CANVAPAINTSERVER_COMPILEDOBJECT_H
